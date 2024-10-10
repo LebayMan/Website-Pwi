@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Sederhana</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        header, nav, section, article, aside, footer {
+            padding: 20px;
+            margin: 10px;
+        }
+        header {
+            background-color: #880808;
+            color: white;
+            text-align: center;
+        }
+            .logout-button {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            padding: 10px 20px;
+            background-color: rgb(0, 0, 0);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .logout-button:hover {
+            background-color: rgb(66, 0, 0);
+        }
+        nav {
+            background-color: #f4f4f4;
+            padding: 10px;
+            text-align: center;
+        }
+        nav a {
+            margin: 0 15px;
+            text-decoration: none;
+            color: #333;
+        }
+        section {
+            display: flex;
+        }
+        article {
+            flex: 3;
+            background-color: #f9f9f9;
+        }
+        aside {
+            flex: 1;
+            background-color: #f1f1f1;
+            margin-left: 10px;
+        }
+        footer {
+            background-color: #880808;
+            color: white;
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Selamat Datang di Website Sederhana</h1>
+        <button class="logout-button" onclick="location.href='login.html'">Keluar</button>
+    </header>
+
+    <nav>
+        <a href="Beranda.html">Beranda</a>
+        <a href="Tentang.html">Tentang</a>
+        <a href="Kontak.html">Kontak</a>
+    </nav>
+    
+    <section>
+        <article>
+            <h2>Tentang</h2>
+            <p>Data Mahasiswa menggunakan tabel.</p>
+            
+            <h2>Data Mahasiswa</h2>
+            <table id="mahasiswaTable">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Nama</th>
+                        <th>NIM</th>
+                        <th>Fakultas</th>
+                        <th>Jurusan</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+
+        </article>
+
+        <aside>
+            <h2>Telkom University</h2>
+            <img src="Telkom.png" alt="Gambar Artikel" style="margin-left: 1px;">
+        </aside>
+    </section>
+
+    <footer>
+        <p>&copy; 2024 Web Sederhana. Semua Hak Dilindungi.</p>
+    </footer>
+
+    <script>
+        const mahasiswaData = JSON.parse(localStorage.getItem('mahasiswa')) || [];
+
+        const mahasiswaTableBody = document.getElementById('mahasiswaTable').getElementsByTagName('tbody')[0];
+
+        mahasiswaData.forEach((mahasiswa, index) => {
+            const row = mahasiswaTableBody.insertRow();
+            const cell1 = row.insertCell(0);
+            const cell2 = row.insertCell(1);
+            const cell3 = row.insertCell(2);
+            const cell4 = row.insertCell(3);
+            const cell5 = row.insertCell(4);
+
+            cell1.innerHTML = index + 1;
+            cell2.innerHTML = mahasiswa.nama;
+            cell3.innerHTML = mahasiswa.nim;
+            cell4.innerHTML = mahasiswa.fakultas;
+            cell5.innerHTML = mahasiswa.jurusan;
+        });
+    </script>
+
+</body>
+</html>
