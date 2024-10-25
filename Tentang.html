@@ -192,6 +192,54 @@
             object-fit: cover;
             border-radius: 5px;
         }
+        .description {
+        overflow: hidden;
+        text-overflow: ellipsis;
+          height: 40px; /* Adjust the height to control the number of lines shown */
+        }
+
+        .show-details-btn {
+        display: block;
+        text-align: center;
+        margin-top: 10px;
+        }
+
+        .popup 
+        {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items:center;
+    
+        z-index: 999;
+        visibility: hidden; /* Initially hidden */
+        opacity: 0;
+        transition: visibility 0.2s, opacity 0.2s;
+        }
+
+        .popup-content {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .popup-content p {
+        margin-bottom: 10px;
+        }
+
+        .close-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 20px;
+        cursor: pointer;
+        }
 
         .hidden {
             display: none;
@@ -344,39 +392,29 @@
         const loginModal = document.getElementById('loginModal');
         const registerModal = document.getElementById('registerModal');
 
+function submitCommission() {
+  const username = document.getElementById('commissionUsername').value;
+  const contact = document.getElementById('commissionContact').value;
+  const price = document.getElementById('commissionPrice').value;
+  const description = document.getElementById('commissionDescription').value;
+  const image = document.getElementById('commissionImage').files[0];
+  const currentUser = localStorage.getItem('currentUser');
 
-        function previewImage(event) 
-        {
-        var reader = new FileReader();
-        reader.onload = function() 
-        {
-        var imagePreviewContainer = document.getElementById('image-preview-container');
-        imagePreviewContainer.innerHTML = '<img src="' + reader.result + '">' +'<span class="filename">' + event.target.files[0].name + '</span>';
-        }
-        reader.readAsDataURL(event.target.files[0]);
-        }
-
-        function submitCommission() {
-        const username = document.getElementById('commissionUsername').value;
-        const contact = document.getElementById('commissionContact').value;
-        const price = document.getElementById('commissionPrice').value;
-        const description = document.getElementById('commissionDescription').value;
-        const image = document.getElementById('commissionImage').files[0];
-        const currentUser = localStorage.getItem('currentUser');
-
-    if (username && price && description && image && contact) {
+  if (username && price && description && image && contact) {
     const reader = new FileReader();
-    reader.onload = function(e) {
-        const img = new Image();
-        img.onload = function() {
+
+    reader.onload = function (e) {
+      const img = new Image();
+      img.onload = function () {
+        // Image resize and formatting
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
         const MAX_WIDTH = 640;
         const MAX_HEIGHT = 480;
 
-        // Calculate aspect ratio to maintain proportions
         let width = img.width;
         let height = img.height;
+
         if (width > MAX_WIDTH || height > MAX_HEIGHT) {
         const ratio = Math.min(MAX_WIDTH / width, MAX_HEIGHT / height);
           width = Math.floor(width * ratio);
@@ -389,24 +427,68 @@
 
         const dataURL = canvas.toDataURL();
 
+        // Create new commission box element
         const commissionBox = document.createElement('div');
         commissionBox.className = 'commission-box';
+
+        // Truncate description to 32 characters and add "..." if longer
+        const limitedDescription = description.length > 32
+        ? description.substring(0, 32) + "..."
+        : description;
+
         commissionBox.innerHTML = `
         <img src="${dataURL}" alt="Commission Image" style="width: ${width}px; height: ${height}px;">
         <p><strong>${username}</strong></p>
         <p>Price: $${price}</p>
-        <p>Contact: $${contact}</p>
-        <p>Description: ${description}</p>
+        <p>Contact: ${contact}</p>
+        <p>Description: ${limitedDescription}</p>
         <p>Made By: ${currentUser}</p>
         `;
+
         document.getElementById('commissionList').appendChild(commissionBox);
+
+        // Add click event listener for show details button
+        commissionBox.querySelector('.show-details-btn').addEventListener('click', function () {
+        showCommissionDetails({
+            image: dataURL,
+            username: username,
+            price: price,
+            contact: contact,
+            description: description, // Include full description in popup
+            createdBy: currentUser,
+        });
+        });
     };
     img.src = e.target.result;
     };
+
     reader.readAsDataURL(image);
-    } else {
+} else {
     alert('Please fill all fields');
-    }
+}
+function showCommissionDetails(commissionData) {
+  const popup = document.querySelector('.popup');
+  const popupContent = document.querySelector('.popup-content');
+  const closeBtn = document.querySelector('.close-btn');   
+
+
+  popupContent.innerHTML = `
+    <img src="${commissionData.image}" alt="Commission Image">
+    <p><strong>${commissionData.username}</strong></p>
+    <p>Price: $${commissionData.price}</p>
+    <p>Description: ${commissionData.description}</p>
+  `;
+
+  // Show the popup
+  popup.style.visibility = 'visible';
+  popup.style.opacity = '1';
+
+  // Add event listener to close the popup
+  closeBtn.addEventListener('click', () => {
+    popup.style.visibility = 'hidden';
+    popup.style.opacity = '0';
+  });
+}
 }
         // Check if user is already logged in
         const currentUser = localStorage.getItem('currentUser');
