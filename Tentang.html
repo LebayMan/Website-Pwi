@@ -178,11 +178,70 @@
         }
 
         .centered-login-btn {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
         }
+
+        .centered-login-btn button {
+  /* Adjust these values to your desired size */
+        padding: 15px 30px;
+        font-size: 18px;
+  /* Add more styles as needed */
+        }
+        .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #1F2128ff;
+        border-radius: 5px;
+        }
+        h1 
+        {
+        text-align: center;
+        }
+
+        label 
+        {
+        display: block;
+        margin-bottom: 5px;
+        }
+
+        input, textarea 
+        {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #333333;
+        border-radius: 5px;
+        margin-bottom: 15px;
+        }
+        button 
+        {
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px; 
+        }
+        .image-preview 
+        {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+        }
+        .image-preview img 
+        {
+        max-width: 200px;
+        height: auto;
+        }
+        .image-preview .filename 
+        {
+            margin-left: 10px;
+            color: #999999;
+        }
+    
+    
     </style>
 </head>
 <body>
@@ -208,11 +267,14 @@
 
     <div class="page" id="commission">
         <h2>Commission</h2>
-        <div id="commissionFormContainer" class="hidden">
+        <div id="commissionFormContainer" class="hidden container">
             <form class="commission-form" id="commissionForm">
-                <label>Upload Image:</label>
-                <input type="file" id="commissionImage"><br><br>
-                <label>Username:</label>
+                <div class="image-preview">
+                    <label for="image">Upload Image:</label>
+                    <input type="file" id="commissionImage" name="image" onchange="previewImage(event)">
+                    <div id="image-preview-container"></div>
+                </div>
+                <label>Name Commission:</label>
                 <input type="text" id="commissionUsername"><br><br>
                 <label>Price:</label>
                 <input type="number" id="commissionPrice"><br><br>
@@ -221,9 +283,13 @@
                 <button type="button" onclick="submitCommission()">Submit Commission</button>
             </form>
         </div>
-
+        <div class="hidden" id="PromtTologin">
+        <p>If you want to commission, you need to login first.</p>
+        </div>
         <div class="centered-login-btn hidden" id="loginPrompt">
+            
             <button class="logout-button" onclick="openLoginModal()">Login</button>
+            
         </div>
     </div>
 
@@ -255,6 +321,19 @@
         const loginBtn = document.getElementById('loginBtn');
         const loginModal = document.getElementById('loginModal');
         const registerModal = document.getElementById('registerModal');
+
+
+        function previewImage(event) 
+        {
+        var reader = new FileReader();
+        reader.onload = function() 
+        {
+        var imagePreviewContainer = document.getElementById('image-preview-container');
+        imagePreviewContainer.innerHTML = '<img src="' + reader.result + '">' +'<span class="filename">' + event.target.files[0].name + '</span>';
+        }
+        reader.readAsDataURL(event.target.files[0]);
+        }
+
         function submitCommission() 
         {
         const username = document.getElementById('commissionUsername').value;
@@ -353,6 +432,7 @@
         }
         const commissionFormContainer = document.getElementById('commissionFormContainer');
         const loginPrompt = document.getElementById('loginPrompt');
+        const promtTologin = document.getElementById('PromtTologin');
 
         // Show/hide sections based on logged-in status
         function showPage(page) {
@@ -371,6 +451,7 @@
             commissionFormContainer.classList.remove('hidden');
             loginPrompt.classList.remove("centered-login-btn");
             loginPrompt.classList.add('hidden');
+            promtTologin.classList.add('hidden');
 
         } 
         else
@@ -378,12 +459,15 @@
             commissionFormContainer.classList.add('hidden');
             loginPrompt.classList.add('centered-login-btn');
             loginPrompt.classList.remove('hidden');
+            promtTologin.classList.remove('hidden');
 
         }
     }
     
     
+    
 }
+
     </script>
 
 </body>
