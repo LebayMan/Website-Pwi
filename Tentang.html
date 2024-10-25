@@ -3,152 +3,387 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web Sederhana</title>
+    <title>Web Commission</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        header, nav, section, article, aside, footer {
-            padding: 20px;
-            margin: 10px;
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #131418ff;
         }
         header {
-            background-color: #880808;
-            color: white;
-            text-align: center;
-        }
-            .logout-button {
-            position: absolute;
-            top: 10px;
-            right: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             padding: 10px 20px;
-            background-color: rgb(0, 0, 0);
+            background-color: #1F2128ff;
+            color: white;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .welcome-text {
+            font-size: 14px;
+            margin-left: 20px;
+            flex-grow: 1;
+        }
+        .logout-button, .login-button {
+            margin-left: 20px;
+            padding: 5px 10px;
+            background-color: rgb(22, 21, 21);
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
         }
-        .logout-button:hover {
+        .logout-button:hover, .login-button:hover {
             background-color: rgb(66, 0, 0);
         }
         nav {
-            background-color: #f4f4f4;
-            padding: 10px;
-            text-align: center;
+            display: flex;
+            justify-content: flex-end;
+            background-color: #1F2128ff;
+            padding: 10px 20px;
         }
         nav a {
             margin: 0 15px;
             text-decoration: none;
-            color: #333;
+            color: #ffffff;
+            font-size: 16px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        nav a:before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 3px;
+            bottom: 0;
+            left: 0;
+            background-color: #880808;
+            visibility: hidden;
+            transform: scaleX(0);
+            transition: all 0.3s ease-in-out;
+        }
+        nav a:hover:before {
+            visibility: visible;
+            transform: scaleX(1);
+        }
+        nav a:hover {
+            color: #ffab91;
         }
         section {
             display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 20px;
+        }
+        article, aside {
+            flex: 10;
+            color: white;
+            padding: 23px;
+            border-radius: 15px;
         }
         article {
-            flex: 3;
-            background-color: #f9f9f9;
+            background-color: #1F2128ff;
+            margin-right: 30px;
         }
         aside {
-            flex: 1;
-            background-color: #f1f1f1;
-            margin-left: 10px;
+            background-color: #1F2128ff;
         }
-        footer {
-            background-color: #880808;
-            color: white;
-            text-align: center;
+        .login-modal, .register-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            width: 300px;
+            
         }
-        table {
+        /* Close button */
+        .close-modal {
+            position: absolute;
+            top: 10px;
+            right: 30px;
+            background-color: none;
+            border: none; /* Removes button border */
+            color: #1F2128ff; /* Color of the 'X' */
+            font-size: 20px; /* Size of the 'X' */
+            font-weight: bold;
+            cursor: pointer;
+            padding: 0; /* Removes default padding */
+        }
+        
+        .close-modal:hover {
+            color: #880808; /* Optional: Change color on hover */
+        }
+        .modal input {
             width: 100%;
-            border-collapse: collapse;
-        }
-
-        table, th, td {
-            border: 1px solid black;
-        }
-
-        th, td {
             padding: 10px;
-            text-align: left;
+            margin: 10px 0;
+        }
+        .modal button {
+            width: 100%;
+            padding: 10px;
+            background-color: #1F2128ff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .modal button:hover {
+            background-color: #880808;
+        }
+        .modal p {
+            text-align: center;
+            margin: 10px 0;
+        }
+        .modal a {
+            color: #880808;
+            cursor: pointer;
+        }
+        .page {
+            display: none;
+            padding: 20px;
+            color: white;
+        }
+        
+        #discover {
+            display: block; /* Discover page shown by default */
         }
 
-        th {
-            background-color: #f2f2f2;
+        .commission-form, .commission-box {
+            background-color: #1F2128ff;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
         }
 
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
+        .commission-box img {
+            max-width: 100%;
+            border-radius: 5px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .centered-login-btn {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
         }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>Selamat Datang di Website Sederhana</h1>
-        <button class="logout-button" onclick="location.href='Index.html'">Keluar</button>
+        <div class="welcome-text" id="welcomeText">Selamat Datang, User</div>
+        <div class="logo">LOGO</div>
+        <button class="logout-button" id="logoutBtn" onclick="logout()">Keluar</button>
+        <button class="login-button" id="loginBtn" onclick="openLoginModal()">Login</button>
     </header>
 
     <nav>
-        <a href="Beranda.html">Beranda</a>
-        <a href="Tentang.html">Tentang</a>
-        <a href="Kontak.html">Kontak</a>
+        <a href="#" onclick="showPage('discover')">Discover</a>
+        <a href="#" onclick="showPage('commission')">Commission</a>
     </nav>
     
-    <section>
-        <article>
-            <h2>Tentang</h2>
-            <p>Data Mahasiswa menggunakan tabel.</p>
-            
-            <h2>Data Mahasiswa</h2>
-            <table id="mahasiswaTable">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Nama</th>
-                        <th>NIM</th>
-                        <th>Fakultas</th>
-                        <th>Jurusan</th>
-                    </tr>
-                </thead>
-                <tbody>
+    <div class="page" id="discover">
+        <h2>Discover</h2>
+        <div id="commissionList">
+            <!-- Commission boxes will appear here -->
+        </div>
+    </div>
 
-                </tbody>
-            </table>
+    <div class="page" id="commission">
+        <h2>Commission</h2>
+        <div id="commissionFormContainer" class="hidden">
+            <form class="commission-form" id="commissionForm">
+                <label>Upload Image:</label>
+                <input type="file" id="commissionImage"><br><br>
+                <label>Username:</label>
+                <input type="text" id="commissionUsername"><br><br>
+                <label>Price:</label>
+                <input type="number" id="commissionPrice"><br><br>
+                <label>Description:</label>
+                <textarea id="commissionDescription"></textarea><br><br>
+                <button type="button" onclick="submitCommission()">Submit Commission</button>
+            </form>
+        </div>
 
-        </article>
+        <div class="centered-login-btn hidden" id="loginPrompt">
+            <button class="logout-button" onclick="openLoginModal()">Login</button>
+        </div>
+    </div>
 
-        <aside>
-            <h2>Telkom University</h2>
-            <img src="Telkom.png" alt="Gambar Artikel" style="margin-left: 1px;">
-        </aside>
-    </section>
+    <!-- Login Modal -->
+    <div class="modal login-modal" id="loginModal">
+        <div class="close-modal" onclick="closeModal()">X</div>
+        <h2>Login</h2>
+        <input type="text" id="loginUsername" placeholder="Username">
+        <input type="password" id="loginPassword" placeholder="Password">
+        <button onclick="login()">Login</button>
+        <p>Don't have an account? <a onclick="openRegisterModal()">Register</a></p>
+    </div>
 
-    <footer>
-        <p>&copy; 2024 Web Sederhana. Semua Hak Dilindungi.</p>
-    </footer>
+    <!-- Register Modal -->
+    <div class="modal register-modal" id="registerModal">
+        <div class="close-modal" onclick="closeModal()">X</div>
+        <h2>Register</h2>
+        <input type="text" id="registerUsername" placeholder="Username">
+        <input type="password" id="registerPassword" placeholder="Password">
+        <button onclick="register()">Register</button>
+        <p>Already have an account? <a onclick="openLoginModal()">Login</a></p>
+    </div>
+    
+
 
     <script>
-        const mahasiswaData = JSON.parse(localStorage.getItem('mahasiswa')) || [];
+        const welcomeText = document.getElementById('welcomeText');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const loginBtn = document.getElementById('loginBtn');
+        const loginModal = document.getElementById('loginModal');
+        const registerModal = document.getElementById('registerModal');
+        function submitCommission() 
+        {
+        const username = document.getElementById('commissionUsername').value;
+        const price = document.getElementById('commissionPrice').value;
+        const description = document.getElementById('commissionDescription').value;
+        const image = document.getElementById('commissionImage').files[0];
+    
+        if (username && price && description && image) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const commissionBox = document.createElement('div');
+                commissionBox.className = 'commission-box';
+                commissionBox.innerHTML = `
+                    <img src="${e.target.result}" alt="Commission Image">
+                    <p><strong>${username}</strong></p>
+                    <p>Price: $${price}</p>
+                    <p>Description: ${description}</p>
+                `;
+                document.getElementById('commissionList').appendChild(commissionBox);
+            };
+            reader.readAsDataURL(image);
+            } else {
+                alert('Please fill all fields');
+            }
+        }
+        // Check if user is already logged in
+        const currentUser = localStorage.getItem('currentUser');
+        if (currentUser) {
+            welcomeText.textContent = 'Selamat Datang, ' + currentUser;
+            loginBtn.style.display = 'none';
+            logoutBtn.style.display = 'block';
+        } else {
+            welcomeText.style.display = 'none';
+            loginBtn.style.display = 'block';
+            logoutBtn.style.display = 'none';
+        }
 
-        const mahasiswaTableBody = document.getElementById('mahasiswaTable').getElementsByTagName('tbody')[0];
+        // Login function
+        function login() {
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
 
-        mahasiswaData.forEach((mahasiswa, index) => {
-            const row = mahasiswaTableBody.insertRow();
-            const cell1 = row.insertCell(0);
-            const cell2 = row.insertCell(1);
-            const cell3 = row.insertCell(2);
-            const cell4 = row.insertCell(3);
-            const cell5 = row.insertCell(4);
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            const user = users.find(user => user.username === username && user.password === password);
 
-            cell1.innerHTML = index + 1;
-            cell2.innerHTML = mahasiswa.nama;
-            cell3.innerHTML = mahasiswa.nim;
-            cell4.innerHTML = mahasiswa.fakultas;
-            cell5.innerHTML = mahasiswa.jurusan;
-        });
+            if (user) {
+                localStorage.setItem('currentUser', username);
+                welcomeText.textContent = 'Selamat Datang, ' + username;
+                welcomeText.style.display = 'block';
+                loginModal.style.display = 'none';
+                loginBtn.style.display = 'none';
+                logoutBtn.style.display = 'block';
+                showPage('commission');
+            } else {
+                alert('Login failed!');
+            }
+
+        }
+
+        // Register function
+        function register() {
+            const username = document.getElementById('registerUsername').value;
+            const password = document.getElementById('registerPassword').value;
+
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            users.push({ username, password });
+            localStorage.setItem('users', JSON.stringify(users));
+            registerModal.style.display = 'none';
+            alert('Registration successful! Please login.');
+        }
+
+        // Logout function
+        function logout() {
+            localStorage.removeItem('currentUser');
+            welcomeText.style.display = 'none';
+            loginBtn.style.display = 'block';
+            logoutBtn.style.display = 'none';
+            showPage('discover');
+        }
+        // Close the modal when clicking the 'X' button
+        function closeModal() 
+        {
+            loginModal.style.display = 'none';
+            registerModal.style.display = 'none';
+        }
+        // Open login modal
+        function openLoginModal() {
+            loginModal.style.display = 'block';
+            registerModal.style.display = 'none';
+        }
+
+        // Open register modal
+        function openRegisterModal() {
+            registerModal.style.display = 'block';
+            loginModal.style.display = 'none';
+        }
+        const commissionFormContainer = document.getElementById('commissionFormContainer');
+        const loginPrompt = document.getElementById('loginPrompt');
+
+        // Show/hide sections based on logged-in status
+        function showPage(page) {
+    // Hide all pages first
+    document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
+    // Show the selected page
+    document.getElementById(page).style.display = 'block';
+
+    // Check if the user is logged in
+    const currentUser = localStorage.getItem('currentUser');
+
+    if (page === 'commission') 
+    {
+        if (currentUser) {
+            // User is logged in
+            commissionFormContainer.classList.remove('hidden');
+            loginPrompt.classList.remove("centered-login-btn");
+            loginPrompt.classList.add('hidden');
+
+        } 
+        else
+        {
+            commissionFormContainer.classList.add('hidden');
+            loginPrompt.classList.add('centered-login-btn');
+            loginPrompt.classList.remove('hidden');
+
+        }
+    }
+    
+    
+}
     </script>
 
 </body>
