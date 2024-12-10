@@ -4,107 +4,173 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Web Sederhana</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        header, nav, section, article, aside, footer {
-            padding: 20px;
-            margin: 10px;
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #131418ff;
         }
         header {
-            background-color: 	#880808;
-            color: white;
-            text-align: center;
-        }
-        .logout-button {
-            position: absolute;
-            top: 10px;
-            right: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             padding: 10px 20px;
-            background-color: rgb(0, 0, 0);
+            background-color: #1F2128ff;
+            color: white;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .welcome-text {
+            font-size: 14px;
+            margin-left: 20px;
+            flex-grow: 1;
+        }
+        .logout-button, .login-button {
+            margin-left: 20px;
+            padding: 5px 10px;
+            background-color: rgb(22, 21, 21);
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
         }
-        .logout-button:hover {
+        .logout-button:hover, .login-button:hover {
             background-color: rgb(66, 0, 0);
         }
         nav {
-            background-color: #f4f4f4;
-            padding: 10px;
-            text-align: center;
+            display: flex;
+            justify-content: flex-end;
+            background-color: #1F2128ff;
+            padding: 10px 20px;
         }
         nav a {
             margin: 0 15px;
             text-decoration: none;
-            color: #333;
+            color: #ffffff;
+            font-size: 16px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        nav a:before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 3px;
+            bottom: 0;
+            left: 0;
+            background-color: #880808;
+            visibility: hidden;
+            transform: scaleX(0);
+            transition: all 0.3s ease-in-out;
+        }
+        nav a:hover:before {
+            visibility: visible;
+            transform: scaleX(1);
+        }
+        nav a:hover {
+            color: #ffab91;
         }
         section {
             display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 20px;
+        }
+        article, aside {
+            flex: 10;
+            color: white;
+            padding: 23px;
+            border-radius: 15px;
         }
         article {
-            flex: 3;
-            background-color: #f9f9f9;
+            background-color: #1F2128ff;
+            margin-right: 30px;
         }
         aside {
-            flex: 1;
-            background-color: #f1f1f1;
-            margin-left: -10px;
+            background-color: #1F2128ff;
         }
-        footer {
-            background-color: 	#880808;
+        .login-modal, .register-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            width: 300px;
+            
+        }
+        /* Close button */
+        .close-modal {
+            position: absolute;
+            top: 10px;
+            right: 30px;
+            background-color: none;
+            border: none; /* Removes button border */
+            color: #1F2128ff; /* Color of the 'X' */
+            font-size: 20px; /* Size of the 'X' */
+            font-weight: bold;
+            cursor: pointer;
+            padding: 0; /* Removes default padding */
+        }
+        
+        .close-modal:hover {
+            color: #880808; /* Optional: Change color on hover */
+        }
+        .modal input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        .modal button {
+            width: 100%;
+            padding: 10px;
+            background-color: #1F2128ff;
             color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .modal button:hover {
+            background-color: #880808;
+        }
+        .modal p {
             text-align: center;
+            margin: 10px 0;
+        }
+        .modal a {
+            color: #880808;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>Selamat Datang di Website Sederhana</h1>
-        <button class="logout-button" onclick="location.href='Index.html'">Keluar</button>
+        <div class="welcome-text" id="welcomeText">Selamat Datang, User</div>
+        <div class="logo">LOGO</div>
+        <button class="logout-button" id="logoutBtn" onclick="logout()">Keluar</button>
+        <button class="login-button" id="loginBtn" onclick="openLoginModal()">Login</button>
     </header>
 
     <nav>
-        <a href="Beranda.html">Beranda</a>
-        <a href="Tentang.html">Tentang</a>
-        <a href="Kontak.html">Kontak</a>
+        <a href="Beranda.html">Discover</a>
+        <a href="Tentang.html">Commission</a>
     </nav>
-
+    
     <section>
         <article>
-        <h2>Artikel Utama</h2>
-        <p>Pentingnya Belajar Coding di Era Digital</p>
-        <h3>1. Peluang Karir yang Luas</h3>
-        <p>Keterampilan coding membuka banyak peluang karir. Banyak perusahaan mencari individu yang memiliki kemampuan pemrograman untuk mengembangkan aplikasi, sistem, dan solusi teknologi. Menurut laporan dari Biro Statistik Tenaga Kerja, pekerjaan di bidang teknologi informasi diprediksi akan tumbuh lebih cepat dibandingkan rata-rata pekerjaan lainnya.</p>
-        
-        <h3>2. Peningkatan Kreativitas</h3>
-        <p>Belajar coding memungkinkan Anda untuk menciptakan sesuatu dari awal. Anda dapat membangun aplikasi, situs web, atau bahkan permainan. Proses menciptakan sesuatu dengan tangan Anda sendiri dapat menjadi sangat memuaskan dan meningkatkan rasa kreativitas.</p>
-        
-        <h3>3. Peningkatan Kemampuan Problem Solving</h3>
-        <p>Coding melibatkan pemecahan masalah dan berpikir logis. Ketika Anda belajar untuk menulis kode, Anda juga belajar bagaimana menganalisis masalah, memecahnya menjadi bagian yang lebih kecil, dan menemukan solusi. Kemampuan ini sangat berharga tidak hanya dalam coding tetapi juga dalam kehidupan sehari-hari.</p>
-        
-        <h3>4. Mempersiapkan Masa Depan</h3>
-        <p>Dengan semakin banyaknya teknologi yang muncul, memiliki pengetahuan tentang coding akan memberi Anda keuntungan kompetitif di pasar kerja. Memahami cara kerja teknologi dan perangkat lunak akan membantu Anda beradaptasi dengan cepat dengan perubahan dan inovasi yang terjadi di industri.</p>
-        
-        <h3>5. Akses ke Komunitas Global</h3>
-        <p>Dunia coding memiliki komunitas yang besar dan mendukung. Anda dapat bergabung dengan forum, grup belajar, atau acara hackathon untuk bertemu dengan orang-orang yang memiliki minat yang sama. Berkolaborasi dengan orang lain dalam proyek coding dapat memperluas wawasan dan keterampilan Anda.</p>
-
-        <h2>Cara Memulai Belajar Coding:</h2>
-        <ul>
-            <li><strong>Pilih Bahasa Pemrograman:</strong> Mulailah dengan bahasa pemrograman yang ramah pemula seperti Python atau JavaScript. Kedua bahasa ini banyak digunakan dan memiliki komunitas yang besar.</li>
-            <li><strong>Ikuti Kursus Online:</strong> Banyak platform seperti Codecademy, Coursera, dan Udemy menawarkan kursus coding untuk pemula. Ini adalah cara yang baik untuk belajar dari instruktur yang berpengalaman.</li>
-            <li><strong>Praktikkan dengan Proyek Nyata:</strong> Setelah mempelajari dasar-dasarnya, cobalah untuk membuat proyek kecil. Ini bisa berupa situs web pribadi, aplikasi sederhana, atau alat yang menyelesaikan masalah yang Anda hadapi.</li>
-            <li><strong>Gabung dengan Komunitas:</strong> Bergabunglah dengan grup belajar lokal atau forum online. Berinteraksi dengan orang lain akan membantu Anda tetap termotivasi dan belajar lebih cepat.</li>
-        </ul>
-
-        <h2>Kesimpulan</h2>
-        <p>Belajar coding bukan hanya tentang mendapatkan pekerjaan di bidang teknologi. Ini adalah tentang membekali diri Anda dengan keterampilan yang relevan di dunia modern. Dengan mempelajari cara coding, Anda tidak hanya membuka pintu untuk peluang karir yang lebih baik, tetapi juga mengembangkan cara berpikir yang dapat bermanfaat dalam berbagai aspek kehidupan.</p>
+            <h2>Tentang</h2>
+            <p>Informasi Website.</p>
         </article>
         <aside>
             <h2>Telkom University</h2>
@@ -112,9 +178,103 @@
         </aside>
     </section>
 
-    <footer>
-        <p>&copy; 2024 Web Sederhana. Semua Hak Dilindungi.</p>
-    </footer>
+    <!-- Login Modal -->
+    <div class="modal login-modal" id="loginModal">
+        <div class="close-modal" onclick="closeModal()">X</div>
+        <h2>Login</h2>
+        <input type="text" id="loginUsername" placeholder="Username">
+        <input type="password" id="loginPassword" placeholder="Password">
+        <button onclick="login()">Login</button>
+        <p>Don't have an account? <a onclick="openRegisterModal()">Register</a></p>
+    </div>
+
+    <!-- Register Modal -->
+    <div class="modal register-modal" id="registerModal">
+        <div class="close-modal" onclick="closeModal()">X</div>
+        <h2>Register</h2>
+        <input type="text" id="registerUsername" placeholder="Username">
+        <input type="password" id="registerPassword" placeholder="Password">
+        <button onclick="register()">Register</button>
+        <p>Already have an account? <a onclick="openLoginModal()">Login</a></p>
+    </div>
+
+
+    <script>
+        const welcomeText = document.getElementById('welcomeText');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const loginBtn = document.getElementById('loginBtn');
+        const loginModal = document.getElementById('loginModal');
+        const registerModal = document.getElementById('registerModal');
+
+        // Check if user is already logged in
+        const currentUser = localStorage.getItem('currentUser');
+        if (currentUser) {
+            welcomeText.textContent = 'Selamat Datang, ' + currentUser;
+            loginBtn.style.display = 'none';
+            logoutBtn.style.display = 'block';
+        } else {
+            welcomeText.style.display = 'none';
+            loginBtn.style.display = 'block';
+            logoutBtn.style.display = 'none';
+        }
+
+        // Login function
+        function login() {
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            const user = users.find(user => user.username === username && user.password === password);
+
+            if (user) {
+                localStorage.setItem('currentUser', username);
+                welcomeText.textContent = 'Selamat Datang, ' + username;
+                welcomeText.style.display = 'block';
+                loginModal.style.display = 'none';
+                loginBtn.style.display = 'none';
+                logoutBtn.style.display = 'block';
+            } else {
+                alert('Login failed!');
+            }
+        }
+
+        // Register function
+        function register() {
+            const username = document.getElementById('registerUsername').value;
+            const password = document.getElementById('registerPassword').value;
+
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            users.push({ username, password });
+            localStorage.setItem('users', JSON.stringify(users));
+            registerModal.style.display = 'none';
+            alert('Registration successful! Please login.');
+        }
+
+        // Logout function
+        function logout() {
+            localStorage.removeItem('currentUser');
+            welcomeText.style.display = 'none';
+            loginBtn.style.display = 'block';
+            logoutBtn.style.display = 'none';
+        }
+        // Close the modal when clicking the 'X' button
+        function closeModal() 
+        {
+            loginModal.style.display = 'none';
+            registerModal.style.display = 'none';
+        }
+        // Open login modal
+        function openLoginModal() {
+            loginModal.style.display = 'block';
+            registerModal.style.display = 'none';
+        }
+
+        // Open register modal
+        function openRegisterModal() {
+            registerModal.style.display = 'block';
+            loginModal.style.display = 'none';
+        }
+    </script>
 
 </body>
 </html>

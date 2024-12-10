@@ -117,13 +117,26 @@
         aside {
             background-color: #C41B1B;
         }
+        .Preivew-Post{
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgb(83, 83, 83);
+            padding: 30px;
+            border-radius: 10px;
+            width: 500px;
+            height: 500px;
+            
+        }
         .login-modal, .register-modal {
             display: none;
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background-color: rgb(196, 27, 27);
+            background-color: rgb(83, 83, 83);
             padding: 30px;
             border-radius: 10px;
             width: 300px;
@@ -197,6 +210,15 @@
         .commission-box img {
                 max-width: 100%;
                 height: auto;
+        }
+        .post .post-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        }
+        .upvote {
+        cursor: pointer;
+        color: #0079d3;
         }
 
         .commission-form, .commission-box {
@@ -326,8 +348,10 @@
         {
             margin-left: 10px;
             color: #999999;
-        }
-    
+        }   
+        h2 {
+    color: red; /* Change 'blue' to any color you prefer */
+}
     
     </style>
 </head>
@@ -354,7 +378,7 @@
     </div>
 
     <div class="page" id="commission">
-        <h2>Post]</h2>
+        <h2>Post</h2>
         <div id="commissionFormContainer" class="hidden container">
             <form class="commission-form" id="commissionForm">
                 <div class="image-preview">
@@ -362,11 +386,11 @@
                     <input type="file" id="commissionImage" name="image" onchange="previewImage(event)">
                     <div id="image-preview-container"></div>
                 </div>
-                <label>Name Posting:</label>
-                <input type="text" id="commissionContact"><br><br>
+                <label>Name Post:</label>
+                <input type="text" id="commissionUsername"><br><br>
                 <label>Description:</label>
                 <textarea id="commissionDescription"></textarea><br><br>
-                <button type="button" class="submit-button" onclick="submitCommission()">Submit Commission</button>
+                <button type="button" class="submit-button" onclick="submitCommission()">Submit Post</button>
             </form>
         </div>
         <div class="hidden" id="PromtTologin">
@@ -440,21 +464,21 @@
         reader.readAsDataURL(event.target.files[0]);
         }
 
-function submitCommission() 
-{
-    const username = document.getElementById('commissionUsername').value;
-  const contact = document.getElementById('commissionContact').value;
-  const price = document.getElementById('commissionPrice').value;
+        function submitCommission() {
+  const username = document.getElementById('commissionUsername').value;
   const description = document.getElementById('commissionDescription').value;
   const image = document.getElementById('commissionImage').files[0];
   const currentUser = localStorage.getItem('currentUser');
 
-    if (username && price && description && image && contact) {
+  // If no image is selected, use default logo_pwi2.png
+  const imageToUse = image ? image : 'logo_pwi2.png';
+
+  if (username && description) {
     const reader = new FileReader();
 
     reader.onload = function (e) {
-    const img = new Image();
-    img.onload = function () {
+      const img = new Image();
+      img.onload = function () {
         // Image resize and formatting
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
@@ -465,7 +489,7 @@ function submitCommission()
         let height = img.height;
 
         if (width > MAX_WIDTH || height > MAX_HEIGHT) {
-        const ratio = Math.min(MAX_WIDTH / width, MAX_HEIGHT / height);
+          const ratio = Math.min(MAX_WIDTH / width, MAX_HEIGHT / height);
           width = Math.floor(width * ratio);
           height = Math.floor(height * ratio);
         }
@@ -481,46 +505,79 @@ function submitCommission()
         commissionBox.className = 'commission-box';
 
         // Truncate description to 32 characters and add "..." if longer
-        const limitedDescription = description.length > 32
-        ? description.substring(0, 32) + "..."
-        : description;
+        const limitedDescription = description.length > 25
+          ? description.substring(0, 25) + "..."
+          : description;
 
         commissionBox.innerHTML = `
         <img src="${dataURL}" alt="Commission Image" style="width: ${width}px; height: ${height}px;">
         <p><strong>${username}</strong></p>
-        <p>Price: $${price}</p>
-        <p>Contact: ${contact}</p>
         <p>Description: ${limitedDescription}</p>
         <p>Made By: ${currentUser}</p>
+        
         `;
+
         showPage('discover');
         document.getElementById('commissionList').appendChild(commissionBox);
 
         // Add click event listener for show details button
         commissionBox.querySelector('.show-details-btn').addEventListener('click', function () {
-        showCommissionDetails({
+          showCommissionDetails({
             image: dataURL,
             username: username,
-            price: price,
-            contact: contact,
             description: description, // Include full description in popup
             createdBy: currentUser,
+          });
         });
-        });
-        
-    };
-    img.src = e.target.result;
+      };
+
+      // Use the selected image or the default logo
+      img.src = imageToUse === 'logo_pwi2.png' ? imageToUse : e.target.result;
     };
 
-    reader.readAsDataURL(image);
+    // If there is an image, read it; otherwise, skip the reader and directly use the default image
+    if (image) {
+      reader.readAsDataURL(image);
+    } else {
+      const img = new Image();
+      img.onload = function () {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const MAX_WIDTH = 640;
+        const MAX_HEIGHT = 480;
+        const width = img.width;
+        const height = img.height;
+
+        const ratio = Math.min(MAX_WIDTH / width, MAX_HEIGHT / height);
+        const finalWidth = Math.floor(width * ratio);
+        const finalHeight = Math.floor(height * ratio);
+
+        canvas.width = finalWidth;
+        canvas.height = finalHeight;
+        ctx.drawImage(img, 0, 0, finalWidth, finalHeight);
+        const dataURL = canvas.toDataURL();
+
+        const commissionBox = document.createElement('div');
+        commissionBox.className = 'commission-box';
+
+        commissionBox.innerHTML = `
+          <img src="${dataURL}" alt="Commission Image" style="width: ${finalWidth}px; height: ${finalHeight}px;">
+          <p><strong>${username}</strong></p>
+          <p>Description: ${description.length > 32 ? description.substring(0, 32) + '...' : description}</p>
+          <p>Made By: ${currentUser}</p>
+          
+        `;
+        showPage('discover');
+        document.getElementById('commissionList').appendChild(commissionBox);
+      };
+
+      img.src = 'logo_pwi2.png';
     }
-    else
-    {
+  } else {
     alert('Please fill all fields');
-    }
-}
+  }
 
-function showCommissionDetails(commissionData) {
+  function showCommissionDetails(commissionData) {
   const popup = document.querySelector('.popup');
   const popupContent = document.querySelector('.popup-content');
   const closeBtn = document.querySelector('.close-btn');   
@@ -529,7 +586,6 @@ function showCommissionDetails(commissionData) {
   popupContent.innerHTML = `
     <img src="${commissionData.image}" alt="Commission Image">
     <p><strong>${commissionData.username}</strong></p>
-
     <p>Description: ${commissionData.description}</p>
   `;
 
@@ -542,9 +598,9 @@ function showCommissionDetails(commissionData) {
     popup.style.visibility = 'hidden';
     popup.style.opacity = '0';
   });
-
-
-        // Check if user is already logged in
+}
+}
+        
         const currentUser = localStorage.getItem('currentUser');
         if (currentUser) {
             welcomeText.textContent = 'Selamat Datang, ' + currentUser;
@@ -555,7 +611,7 @@ function showCommissionDetails(commissionData) {
             loginBtn.style.display = 'block';
             logoutBtn.style.display = 'none';
         }
-    }
+
         // Login function
         function login() {
             const username = document.getElementById('loginUsername').value;
