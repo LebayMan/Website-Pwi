@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Commission</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: rgb(255, 255, 255);
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: rgb(196, 27, 27);
+            color: white;
+        }
+        .submit-button {
+        background-color: #00FF00; /* Green color */
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease-in-out;
+        }
+        
+        .submit-button:hover {
+          background-color: #00CC00; /* Slightly darker green on hover */
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .welcome-text {
+            font-size: 14px;
+            margin-left: 20px;
+            flex-grow: 1;
+        }
+        .logout-button, .login-button {
+            margin-left: 20px;
+            padding: 5px 10px;
+            background-color: rgb(22, 21, 21);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .logout-button:hover, .login-button:hover {
+            background-color: rgb(66, 0, 0);
+        }
+        nav {
+            display: flex;
+            
+            justify-content: center; /* Centers content horizontally */
+            align-items: center; 
+            height: 0,5vh;
+            justify-content: flex-end;
+            background-color: #C41B1B;
+            padding: 10px 20px;
+        }
+        nav a {
+            margin: 0 15px;
+            text-decoration: none;
+            color: #ffffff;
+            font-size: 16px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        nav a:before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 3px;
+            bottom: 0;
+            left: 0;
+            background-color: #880808;
+            visibility: hidden;
+            transform: scaleX(0);
+            transition: all 0.3s ease-in-out;
+        }
+        nav a:hover:before {
+            visibility: visible;
+            transform: scaleX(1);
+        }
+        nav a:hover {
+            color: #ffab91;
+        }
+        section {
+            display: flex;
+            
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 20px;
+        }
+        article, aside {
+            flex: 10;
+            
+            color: white;
+            padding: 23px;
+            border-radius: 15px;
+        }
+        article {
+            background-color: #C41B1B;
+            margin-right: 30px;
+        }
+        aside {
+            background-color: #C41B1B;
+        }
+        .Preivew-Post{
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgb(83, 83, 83);
+            padding: 30px;
+            border-radius: 10px;
+            width: 500px;
+            height: 500px;
+            
+        }
+        .login-modal, .register-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgb(83, 83, 83);
+            padding: 30px;
+            border-radius: 10px;
+            width: 300px;
+            
+        }
+        /* Close button */
+        .close-modal {
+            position: absolute;
+            top: 10px;
+            right: 30px;
+            background-color: none;
+            border: none; /* Removes button border */
+            color: #1F2128ff; /* Color of the 'X' */
+            font-size: 20px; /* Size of the 'X' */
+            font-weight: bold;
+            cursor: pointer;
+            padding: 0; /* Removes default padding */
+        }
+        
+        .close-modal:hover {
+            color: #880808; /* Optional: Change color on hover */
+        }
+        .modal input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        .modal button {
+            width: 100%;
+            padding: 10px;
+            background-color: rgb(40, 38, 31);
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .modal button:hover {
+            background-color: #880808;
+        }
+        .modal p {
+            text-align: center;
+            margin: 10px 0;
+        }
+        .modal a {
+            color: #880808;
+            cursor: pointer;
+        }
+        .page {
+            display: none;
+            padding: 20px;
+            color: white;
+        }
+        
+        #discover {
+            display: block; /* Discover page shown by default */
+        }
+        .discover-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        }
+
+        .commission-box {
+                width: 300px; /* Adjust the width as needed */
+                margin: 10px;
+                border: 1px solid #ccc;
+                padding: 10px;
+                padding-bottom: 100%;
+                text-align: center;
+                }
+            
+        .commission-box img {
+                max-width: 100%;
+                height: auto;
+        }
+        .post .post-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        }
+        .upvote {
+        cursor: pointer;
+        color: #0079d3;
+        }
+
+        .commission-form, .commission-box {
+            background-color: #C41B1B;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+        }
+
+        .commission-box img {
+            max-width: 100%;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+        .description {
+        overflow: hidden;
+        text-overflow: ellipsis;
+          height: 40px; /* Adjust the height to control the number of lines shown */
+        }
+
+        .show-details-btn {
+        background-color: rgb(22, 21, 21);
+        display: block;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        text-align: center;
+        margin-top: 10px;
+        }
+        .show-details-btn:hover {
+            background-color: rgb(66, 0, 0);
+        }
+        .popup 
+        {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgb(196, 27, 27);
+        display: flex;
+        justify-content: center;
+        align-items:center;
+    
+        z-index: 999;
+        visibility: hidden; /* Initially hidden */
+        opacity: 0;
+        transition: visibility 0.2s, opacity 0.2s;
+        }
+
+        .popup-content {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0px 0px 10px rgb(196, 27, 27);
+        }
+
+        .popup-content p {
+        margin-bottom: 10px;
+        }
+
+        .closes-btn {
+            margin-left: 20px;
+            padding: 5px 10px;
+            background-color: rgb(22, 21, 21);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .closes-btn:hover{
+            background-color: rgb(66, 0, 0);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .centered-login-btn {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        }
+
+        .centered-login-btn button {
+  /* Adjust these values to your desired size */
+        padding: 15px 30px;
+        font-size: 18px;
+  /* Add more styles as needed */
+        }
+        .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #C41B1B;
+        border-radius: 5px;
+        }
+        h1 
+        {
+        text-align: center;
+        }
+
+        label 
+        {
+        display: block;
+        margin-bottom: 5px;
+        }
+
+        input, textarea 
+        {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #af3737;
+        border-radius: 5px;
+        margin-bottom: 15px;
+        }
+        button 
+        {
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px; 
+        }
+        .image-preview 
+        {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+        }
+        .image-preview img 
+        {
+        max-width: 200px;
+        height: auto;
+        }
+        .image-preview .filename 
+        {
+            margin-left: 10px;
+            color: #999999;
+        }   
+        h2 {
+    color: red; /* Change 'blue' to any color you prefer */
+}
+    
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="welcome-text" id="welcomeText">Selamat Datang, User</div>
+        <img src="logo_pwi2.png" alt="description"  height="50"/>
+        <div class="logo">Red.</div>
+        <button class="logout-button" id="logoutBtn" onclick="logout()">Keluar</button>
+        <button class="login-button" id="loginBtn" onclick="openLoginModal()">Login</button>
+    </header>
+
+    <nav>
+        <a href="#" onclick="showPage('discover')">Discover</a>
+        <a href="#" onclick="showPage('commission')">Post</a>
+    </nav>
+    
+    <div class="page" id="discover">
+        <h2>Discover</h2>
+        <div class="discover-container" id="commissionList">
+            <!-- Commission boxes will appear here -->
+        </div>
+    </div>
+
+    <div class="page" id="commission">
+        <h2>Post</h2>
+        <div id="commissionFormContainer" class="hidden container">
+            <form class="commission-form" id="commissionForm">
+                <div class="image-preview">
+                    <label for="image">Upload Image:</label>
+                    <input type="file" id="commissionImage" name="image" onchange="previewImage(event)">
+                    <div id="image-preview-container"></div>
+                </div>
+                <label>Name Post:</label>
+                <input type="text" id="commissionUsername"><br><br>
+                <label>Description:</label>
+                <textarea id="commissionDescription"></textarea><br><br>
+                <button type="button" class="submit-button" onclick="submitCommission()">Submit Post</button>
+            </form>
+        </div>
+        <div class="hidden" id="PromtTologin">
+        <p>If you want to Post, you need to login first.</p>
+        </div>
+        <div class="centered-login-btn hidden" id="loginPrompt">
+            
+            <button class="logout-button" onclick="openLoginModal()">Login</button>
+            
+        </div>
+    </div>
+    <!--Pop up-->
+    <div class="popup">
+        <div class="popup-content">
+            <!-- The content will be dynamically generated -->
+        </div>
+    </div>
+    
+    <!-- Login Modal -->
+    <div class="modal login-modal" id="loginModal">
+        <div class="close-modal" onclick="closeModal()">X</div>
+        <h2>Login</h2>
+        <input type="text" id="loginUsername" placeholder="Username">
+        <input type="password" id="loginPassword" placeholder="Password">
+        <button onclick="login()">Login</button>
+        <p>Don't have an account? <a onclick="openRegisterModal()">Register</a></p>
+    </div>
+
+    <!-- Register Modal -->
+    <div class="modal register-modal" id="registerModal">
+        <div class="close-modal" onclick="closeModal()">X</div>
+        <h2>Register</h2>
+        <input type="text" id="registerUsername" placeholder="Username">
+        <input type="password" id="registerPassword" placeholder="Password">
+        <button onclick="register()">Register</button>
+        <p>Already have an account? <a onclick="openLoginModal()">Login</a></p>
+    </div>
+    
+
+
+    <script>
+        const welcomeText = document.getElementById('welcomeText');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const loginBtn = document.getElementById('loginBtn');
+        const loginModal = document.getElementById('loginModal');
+        const registerModal = document.getElementById('registerModal');
+
+        function showCommissionDetails(commissionData) {
+        const popup = document.querySelector('.popup');
+        const popupContent = document.querySelector('.popup-content');
+        const closeBtn = document.querySelector('.closes-btn');
+
+        popupContent.innerHTML = `
+        <img src="${commissionData.image}" alt="Commission Image">
+        <p><strong>${commissionData.username}</strong></p>
+        <p>Description: ${commissionData.description}</p>
+        `;
+
+        // Show the popup
+        popup.style.visibility = 'visible';
+        popup.style.opacity = '1';
+
+        // Add event listener to close the popup
+        closeBtn.addEventListener('click', () => {
+        popup.style.visibility = 'hidden';
+        popup.style.opacity = '0';
+        });
+        }       
+        function previewImage(event) 
+        {
+        var reader = new FileReader();
+        reader.onload = function() 
+        {
+        var imagePreviewContainer = document.getElementById('image-preview-container');
+        imagePreviewContainer.innerHTML = '<img src="' + reader.result + '">' +'<span class="filename">' + event.target.files[0].name + '</span>';
+        }
+        reader.readAsDataURL(event.target.files[0]);
+        }
+
+        function submitCommission() {
+  const username = document.getElementById('commissionUsername').value;
+  const description = document.getElementById('commissionDescription').value;
+  const image = document.getElementById('commissionImage').files[0];
+  const currentUser = localStorage.getItem('currentUser') || 'Anonymous';
+  const defaultImage = 'logo_pwi2.png';
+
+  if (!username || !description) {
+    alert('Please fill all fields');
+    return;
+  }
+  if (!image) {
+    alert('Please Put an Image');
+    return;
+  }
+
+  const MAX_WIDTH = 640;
+  const MAX_HEIGHT = 480;
+
+  const createCommissionBox = (dataURL, width, height) => {
+    const limitedDescription =
+      description.length > 25 ? description.substring(0, 25) + "..." : description;
+
+    const commissionBox = document.createElement('div');
+    commissionBox.className = 'commission-box';
+    commissionBox.innerHTML = `
+      <img src="${dataURL}" alt="Commission Image" style="width: ${width}px; height: ${height}px;">
+      <p><strong>${username}</strong></p>
+      <p>Description: ${limitedDescription}</p>
+      <p>Made By: ${currentUser}</p>
+      <button class="show-details-btn">Show More</button>
+    `;
+
+    document.getElementById('commissionList').appendChild(commissionBox);
+
+    // Show details popup on button click
+    commissionBox.querySelector('.show-details-btn').addEventListener('click', () => {
+      showCommissionDetails({
+        image: dataURL,
+        username,
+        description,
+        createdBy: currentUser,
+      });
+    });
+
+    showPage('discover');
+  };
+
+  const processImage = (imageSrc, isDefault = false) => {
+    const img = new Image();
+    img.onload = () => {
+      let width = img.width;
+      let height = img.height;
+
+      if (width > MAX_WIDTH || height > MAX_HEIGHT) {
+        const ratio = Math.min(MAX_WIDTH / width, MAX_HEIGHT / height);
+        width = Math.floor(width * ratio);
+        height = Math.floor(height * ratio);
+      }
+
+      // Resize and convert to data URL using canvas
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
+      const dataURL = canvas.toDataURL();
+    // Use the default image path directly
+    createCommissionBox(dataURL, width, height);
+    };
+
+    // Ensure the correct src is assigned
+    img.src = isDefault ? defaultImage : imageSrc;
+
+    // For default images, force `onload` trigger if browser caching skips it
+    if (isDefault) {
+      img.onload();
+    }
+  };
+
+  if (image) {
+    const reader = new FileReader();
+    reader.onload = (e) => processImage(e.target.result);
+    reader.readAsDataURL(image);
+  } else {
+    processImage(defaultImage, true);
+  }
+
+
+
+  function showCommissionDetails(commissionData) {
+    const popup = document.querySelector('.popup');
+    const popupContent = document.querySelector('.popup-content');
+
+    if (!popup || !popupContent) {
+        console.error("Popup or popup-content element not found in the DOM.");
+        return;
+    }
+
+    // Dynamically set the popup content, including the close button
+    popupContent.innerHTML = `
+        <img src="${commissionData.image}" alt="Commission Image">
+        <p><strong>${commissionData.username}</strong></p>
+        <p>Description: ${commissionData.description}</p>
+        <button class="closes-btn">Close</button>
+    `;
+
+    // Show the popup
+    popup.style.visibility = 'visible';
+    popup.style.opacity = '1';
+
+    // Attach click event listener to the dynamically created close button
+    const closeBtn = popupContent.querySelector('.closes-btn');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+            popup.style.visibility = 'hidden';
+            popup.style.opacity = '0';
+            console.log('Popup closed');
+        });
+    } else {
+        console.error("Close button not found in the dynamically created popup content.");
+    }
+}
+
+
+}
+        
+        const currentUser = localStorage.getItem('currentUser');
+        if (currentUser) {
+            welcomeText.textContent = 'Selamat Datang, ' + currentUser;
+            loginBtn.style.display = 'none';
+            logoutBtn.style.display = 'block';
+        } else {
+            welcomeText.style.display = 'none';
+            loginBtn.style.display = 'block';
+            logoutBtn.style.display = 'none';
+        }
+
+        // Login function
+        function login() {
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            const user = users.find(user => user.username === username && user.password === password);
+
+            if (user) {
+                localStorage.setItem('currentUser', username);
+                welcomeText.textContent = 'Selamat Datang, ' + username;
+                welcomeText.style.display = 'block';
+                loginModal.style.display = 'none';
+                loginBtn.style.display = 'none';
+                logoutBtn.style.display = 'block';
+                showPage('commission');
+            } else {
+                alert('Login failed!');
+            }
+
+        }
+
+        // Register function
+        function register() {
+            const username = document.getElementById('registerUsername').value;
+            const password = document.getElementById('registerPassword').value;
+
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            users.push({ username, password });
+            localStorage.setItem('users', JSON.stringify(users));
+            registerModal.style.display = 'none';
+            alert('Registration successful! Please login.');
+        }
+
+        // Logout function
+        function logout() {
+            localStorage.removeItem('currentUser');
+            welcomeText.style.display = 'none';
+            loginBtn.style.display = 'block';
+            logoutBtn.style.display = 'none';
+            showPage('discover');
+        }
+        // Close the modal when clicking the 'X' button
+        function closeModal() 
+        {
+            loginModal.style.display = 'none';
+            registerModal.style.display = 'none';
+        }
+        // Open login modal
+        function openLoginModal() {
+            loginModal.style.display = 'block';
+            registerModal.style.display = 'none';
+        }
+
+        // Open register modal
+        function openRegisterModal() {
+            registerModal.style.display = 'block';
+            loginModal.style.display = 'none';
+        }
+        const commissionFormContainer = document.getElementById('commissionFormContainer');
+        const loginPrompt = document.getElementById('loginPrompt');
+        const promtTologin = document.getElementById('PromtTologin');
+
+        // Show/hide sections based on logged-in status
+        function showPage(page) {
+    // Hide all pages first
+    document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
+    // Show the selected page
+    document.getElementById(page).style.display = 'block';
+
+    // Check if the user is logged in
+    const currentUser = localStorage.getItem('currentUser');
+
+    if (page === 'commission') 
+    {
+        if (currentUser) {
+            // User is logged in
+            commissionFormContainer.classList.remove('hidden');
+            loginPrompt.classList.remove("centered-login-btn");
+            loginPrompt.classList.add('hidden');
+            promtTologin.classList.add('hidden');
+
+        } 
+        else
+        {
+            commissionFormContainer.classList.add('hidden');
+            loginPrompt.classList.add('centered-login-btn');
+            loginPrompt.classList.remove('hidden');
+            promtTologin.classList.remove('hidden');
+
+        }
+    }
+    
+    
+    
+}
+
+    </script>
+
+</body>
+</html>
