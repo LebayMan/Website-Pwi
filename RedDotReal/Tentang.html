@@ -508,106 +508,55 @@
         reader.readAsDataURL(event.target.files[0]);
         }
 
-        function submitCommission() {
-  const username = document.getElementById('commissionUsername').value;
-  const description = document.getElementById('commissionDescription').value;
-  const contact = document.getElementById('commissionContact').value;
-  const price = document.getElementById('commissionPrice').value;
-  const image = document.getElementById('commissionImage').files[0];
-  const currentUser = localStorage.getItem('currentUser') || 'Anonymous';
-  const defaultImage = 'logo_pwi2.png';
+// Global array to hold commission data
+let commissions = [];
 
-  // Validate required fields
-  if (!username || !description || !contact || !price) {
-    alert('Please fill all fields');
-    return;
-  }
-  if (!image) {
-    alert('Please upload an image');
-    return;
-  }
+// Save commissions to localStorage
+function saveCommissionsToStorage() {
+    localStorage.setItem("commissions", JSON.stringify(commissions));
+}
 
-  const MAX_WIDTH = 640;
-  const MAX_HEIGHT = 480;
+// Load commissions from localStorage
+function loadCommissionsFromStorage() {
+    const storedCommissions = localStorage.getItem("commissions");
+    if (storedCommissions) {
+        commissions = JSON.parse(storedCommissions);
+        commissions.forEach((commission) => {
+            createCommissionBox(commission.image, commission.username, commission.description, commission.price, commission.contact);
+        });
+    }
+}
 
-  const createCommissionBox = (dataURL, width, height) => {
-    const limitedDescription =
-      description.length > 25 ? description.substring(0, 25) + "..." : description;
+// Function to create a commission box
+function createCommissionBox(image, username, description, price, contact) {
+    const limitedDescription = description.length > 25 ? description.substring(0, 25) + "..." : description;
 
     const commissionBox = document.createElement('div');
     commissionBox.className = 'commission-box';
     commissionBox.innerHTML = `
-      <img src="${dataURL}" alt="Commission Image" style="width: ${width}px; height: ${height}px;">
-      <p><strong>${username}</strong></p>
-      <p>Price: $${price}</p>
-      <p>Contact: ${contact}</p>
-      <p>Description: ${limitedDescription}</p>
-      <p>Made By: ${currentUser}</p>
-      <button class="show-details-btn">Show More</button>
+        <img src="${image}" alt="Commission Image" style="width: 200px; height: auto;">
+        <p><strong>${username}</strong></p>
+        <p>Description: ${limitedDescription}</p>
+        <p>Price: Rp${price}</p>
+        <button class="show-details-btn">Show More</button>
     `;
 
     document.getElementById('commissionList').appendChild(commissionBox);
 
     // Show details popup on button click
     commissionBox.querySelector('.show-details-btn').addEventListener('click', () => {
-      showCommissionDetails({
-        image: dataURL,
-        username,
-        description,
-        contact,
-        price,
-        createdBy: currentUser,
-      });
+        showCommissionDetails({
+            image,
+            username,
+            description,
+            price,
+            contact,
+        });
     });
+}
 
-    showPage('discover');
-  };
-
-  const processImage = (imageSrc, isDefault = false) => {
-    const img = new Image();
-    img.onload = () => {
-      let width = img.width;
-      let height = img.height;
-
-      if (width > MAX_WIDTH || height > MAX_HEIGHT) {
-        const ratio = Math.min(MAX_WIDTH / width, MAX_HEIGHT / height);
-        width = Math.floor(width * ratio);
-        height = Math.floor(height * ratio);
-      }
-
-      // Resize and convert to data URL using canvas
-      const canvas = document.createElement('canvas');
-      canvas.width = width;
-      canvas.height = height;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0, width, height);
-      const dataURL = canvas.toDataURL();
-
-      createCommissionBox(dataURL, width, height);
-    };
-
-    // Ensure the correct src is assigned
-    img.src = isDefault ? defaultImage : imageSrc;
-
-    // For default images, force `onload` trigger if browser caching skips it
-    if (isDefault) {
-      img.onload();
-    }
-  };
-
-  if (image) {
-    const reader = new FileReader();
-    reader.onload = (e) => processImage(e.target.result);
-    reader.readAsDataURL(image);
-  } else {
-    processImage(defaultImage, true);
-  }
-
-
-
-
-
-  function showCommissionDetails(commissionData) {
+// Function to show commission details in a popup
+function showCommissionDetails(commissionData) {
     const popup = document.querySelector('.popup');
     const popupContent = document.querySelector('.popup-content');
 
@@ -621,10 +570,10 @@
         <img src="${commissionData.image}" alt="Commission Image">
         <p><strong>${commissionData.username}</strong></p>
         <p>Description: ${commissionData.description}</p>
-        <p>Price: $${commissionData.price}</p>
+        <p>Price: Rp${commissionData.price}</p>
         <p>Contact: ${commissionData.contact}</p>
-        <button class="contact-btn">Contact the Seller</button>
-        <button class="closes-btn">Close</button>
+        <button class="contact-btn">Hubungi Penjual</button>
+        <button class="closes-btn">Tutup</button>
     `;
 
     // Show the popup
@@ -647,23 +596,87 @@
     const contactBtn = popupContent.querySelector('.contact-btn');
     if (contactBtn) {
         contactBtn.addEventListener('click', () => {
-            const phoneNumber = commissionData.contact.replace(/\D/g, ''); // Clean phone number
-            if (phoneNumber) {
-                const whatsappUrl = `https://wa.me/${phoneNumber}`;
-                window.open(whatsappUrl, '_blank'); // Open WhatsApp in a new tab
-            } else {
-                alert("Invalid phone number.");
-                console.error("Contact phone number is missing or invalid.");
+            let phoneNumber = commissionData.contact.trim(); // Remove whitespace
+
+            // Check if the phone number starts with "0" and replace it with "+62"
+            if (phoneNumber.startsWith("0")) {
+                phoneNumber = "+62" + phoneNumber.slice(1);
             }
+
+            // Validate that the phone number contains only numbers after processing
+            if (!/^\+62\d+$/.test(phoneNumber)) {
+                alert("Nomor telepon tidak valid. Pastikan menggunakan format 0878 atau nomor yang benar.");
+                console.error("Invalid phone number format:", phoneNumber);
+                return;
+            }
+
+            // Create the pre-filled WhatsApp message
+            const preText = `Halo, saya ingin membeli item ini:\n` +
+                `- Nama: ${commissionData.username}\n` +
+                `- Deskripsi: ${commissionData.description}\n` +
+                `- Harga: Rp${commissionData.price}\n` +
+                `Apakah item ini masih tersedia?`;
+
+            // Encode the message for URL usage
+            const encodedText = encodeURIComponent(preText);
+
+            // Create the WhatsApp URL
+            const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedText}`;
+            window.open(whatsappUrl, '_blank'); // Open WhatsApp in a new tab
         });
     } else {
         console.error("Contact button not found in the dynamically created popup content.");
     }
 }
 
+// Function to submit a commission
+function submitCommission() {
+    const username = document.getElementById('commissionUsername').value;
+    const description = document.getElementById('commissionDescription').value;
+    const imageFile = document.getElementById('commissionImage').files[0];
+    const price = document.getElementById('commissionPrice').value;
+    const contact = document.getElementById('commissionContact').value;
 
+    if (!username || !description || !price || !contact) {
+        alert('Please fill all fields');
+        return;
+    }
 
+    if (!imageFile) {
+        alert('Please upload an image');
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        const image = e.target.result;
+
+        // Save the commission data to the global array
+        const commissionData = { image, username, description, price, contact };
+        commissions.push(commissionData);
+
+        // Save to localStorage
+        saveCommissionsToStorage();
+
+        // Create the commission box
+        createCommissionBox(image, username, description, price, contact);
+
+        // Switch to the Discover page
+        showPage('discover');
+    };
+    reader.readAsDataURL(imageFile);
 }
+
+// Load commissions from storage when the page loads
+window.onload = () => {
+    loadCommissionsFromStorage();
+};
+
+
+
+
+
+
         
         const currentUser = localStorage.getItem('currentUser');
         if (currentUser) {
