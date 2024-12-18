@@ -280,6 +280,25 @@
         .popup-content p {
         margin-bottom: 10px;
         }
+        .popup-content button {
+    margin: 10px 5px;
+    padding: 10px;
+    font-size: 14px;
+    cursor: pointer;
+}
+.contact-btn {
+    background-color: #25D366; /* WhatsApp green */
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+.closes-btn {
+    background-color: #f44336; /* Red */
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
 
         .closes-btn {
             margin-left: 20px;
@@ -398,22 +417,29 @@
                     <input type="file" id="commissionImage" name="image" onchange="previewImage(event)">
                     <div id="image-preview-container"></div>
                 </div>
-                <label>Name Post:</label>
-                <input type="text" id="commissionUsername"><br><br>
-                <label>Description:</label>
-                <textarea id="commissionDescription"></textarea><br><br>
+                <label for="commissionUsername">Name Post:</label>
+                <input type="text" id="commissionUsername" name="username"><br><br>
+    
+                <label for="commissionContact">Phone:</label>
+                <input type="text" id="commissionContact" name="contact" placeholder="Enter phone"><br><br>
+    
+                <label for="commissionPrice">Price:</label>
+                <input type="number" id="commissionPrice" name="price" placeholder="Enter price"><br><br>
+    
+                <label for="commissionDescription">Description:</label>
+                <textarea id="commissionDescription" name="description" placeholder="Enter description"></textarea><br><br>
+    
                 <button type="button" class="submit-button" onclick="submitCommission()">Submit Post</button>
             </form>
         </div>
         <div class="hidden" id="PromtTologin">
-        <p>If you want to Post, you need to login first.</p>
+            <p>If you want to Post, you need to login first.</p>
         </div>
         <div class="centered-login-btn hidden" id="loginPrompt">
-            
             <button class="logout-button" onclick="openLoginModal()">Login</button>
-            
         </div>
     </div>
+    
     <!--Pop up-->
     <div class="popup">
         <div class="popup-content">
@@ -485,16 +511,19 @@
         function submitCommission() {
   const username = document.getElementById('commissionUsername').value;
   const description = document.getElementById('commissionDescription').value;
+  const contact = document.getElementById('commissionContact').value;
+  const price = document.getElementById('commissionPrice').value;
   const image = document.getElementById('commissionImage').files[0];
   const currentUser = localStorage.getItem('currentUser') || 'Anonymous';
   const defaultImage = 'logo_pwi2.png';
 
-  if (!username || !description) {
+  // Validate required fields
+  if (!username || !description || !contact || !price) {
     alert('Please fill all fields');
     return;
   }
   if (!image) {
-    alert('Please Put an Image');
+    alert('Please upload an image');
     return;
   }
 
@@ -510,6 +539,8 @@
     commissionBox.innerHTML = `
       <img src="${dataURL}" alt="Commission Image" style="width: ${width}px; height: ${height}px;">
       <p><strong>${username}</strong></p>
+      <p>Price: $${price}</p>
+      <p>Contact: ${contact}</p>
       <p>Description: ${limitedDescription}</p>
       <p>Made By: ${currentUser}</p>
       <button class="show-details-btn">Show More</button>
@@ -523,6 +554,8 @@
         image: dataURL,
         username,
         description,
+        contact,
+        price,
         createdBy: currentUser,
       });
     });
@@ -549,8 +582,8 @@
       const ctx = canvas.getContext('2d');
       ctx.drawImage(img, 0, 0, width, height);
       const dataURL = canvas.toDataURL();
-    // Use the default image path directly
-    createCommissionBox(dataURL, width, height);
+
+      createCommissionBox(dataURL, width, height);
     };
 
     // Ensure the correct src is assigned
@@ -572,6 +605,8 @@
 
 
 
+
+
   function showCommissionDetails(commissionData) {
     const popup = document.querySelector('.popup');
     const popupContent = document.querySelector('.popup-content');
@@ -581,11 +616,14 @@
         return;
     }
 
-    // Dynamically set the popup content, including the close button
+    // Dynamically set the popup content, including the close button and contact button
     popupContent.innerHTML = `
         <img src="${commissionData.image}" alt="Commission Image">
         <p><strong>${commissionData.username}</strong></p>
         <p>Description: ${commissionData.description}</p>
+        <p>Price: $${commissionData.price}</p>
+        <p>Contact: ${commissionData.contact}</p>
+        <button class="contact-btn">Contact the Seller</button>
         <button class="closes-btn">Close</button>
     `;
 
@@ -593,7 +631,7 @@
     popup.style.visibility = 'visible';
     popup.style.opacity = '1';
 
-    // Attach click event listener to the dynamically created close button
+    // Attach click event listener to the close button
     const closeBtn = popupContent.querySelector('.closes-btn');
     if (closeBtn) {
         closeBtn.addEventListener('click', () => {
@@ -604,7 +642,25 @@
     } else {
         console.error("Close button not found in the dynamically created popup content.");
     }
+
+    // Attach click event listener to the contact button
+    const contactBtn = popupContent.querySelector('.contact-btn');
+    if (contactBtn) {
+        contactBtn.addEventListener('click', () => {
+            const phoneNumber = commissionData.contact.replace(/\D/g, ''); // Clean phone number
+            if (phoneNumber) {
+                const whatsappUrl = `https://wa.me/${phoneNumber}`;
+                window.open(whatsappUrl, '_blank'); // Open WhatsApp in a new tab
+            } else {
+                alert("Invalid phone number.");
+                console.error("Contact phone number is missing or invalid.");
+            }
+        });
+    } else {
+        console.error("Contact button not found in the dynamically created popup content.");
+    }
 }
+
 
 
 }
